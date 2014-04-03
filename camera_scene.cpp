@@ -1,11 +1,6 @@
 #include "camera_scene.hpp"
 
 void igr::camera_scene::on_begin () {
-  /* Setup the projection */
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(45, (float) window.getSize().x / (float) window.getSize().y, 0.1, 1000);
-
   /* Set up lighting */
   //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
   glEnable(GL_LIGHTING);
@@ -74,13 +69,52 @@ void igr::camera_scene::on_update (float delta) {
   cam.transform(matr<double>::make_rotation_x(rotX));
   cam.transform(matr<double>::make_rotation_y(rotY));
   cam.transform(matr<double>::make_rotation_z(rotZ));
+
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) {
+    proj = projection::orthogonal;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2)) {
+    proj = projection::perspective;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3)) {
+    proj = projection::oblique;
+  }
 }
 
 void igr::camera_scene::on_draw () {
+  /* Clear the scene */
   glClearColor(0.15f, 0.175f, 0.2f, 1.f);
   glClearDepth(1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  /* Update the projection */
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  auto aspect = (float) window.getSize().x / (float) window.getSize().y;
+
+  switch (proj) {
+    case projection::orthogonal: {
+      glOrtho(-aspect, aspect, -1.0, 1.0, 0.1, 1000.0);
+
+      break;
+    }
+
+    case projection::perspective: {
+      gluPerspective(45.0, aspect, 0.1, 1000.0);
+
+      break;
+    }
+
+    case projection::oblique: {
+
+
+      break;
+    }
+  }
+
+  /* Update the camera */
   cam.gl_update();
 
   /* Draw axis */

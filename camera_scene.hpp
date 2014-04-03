@@ -6,14 +6,20 @@
 
 
 namespace igr {
+  enum class projection {
+    orthogonal, perspective, oblique
+  };
+
   class camera_scene : public scene<camera_scene> {
       camera cam;
       mesh box;
+      projection proj;
 
     public:
       camera_scene()
         : scene {"Práctica 6 - Daniel Escoz Solana"},
-          cam{{3.0, 3.0, 3.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}}
+          cam{{3.0, 3.0, 3.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}},
+          proj{projection::orthogonal}
       {}
 
       void on_begin ();

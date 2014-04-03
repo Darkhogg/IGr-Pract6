@@ -41,9 +41,9 @@ bool igr::camera_scene::on_event (event_t event) {
 }
 
 void igr::camera_scene::on_update (float delta) {
-  double rotX = 0;
-  double rotY = 0;
-  double rotZ = 0;
+  double rotX = 0.0;
+  double rotY = 0.0;
+  double rotZ = 0.0;
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
     rotX += delta;
@@ -70,6 +70,35 @@ void igr::camera_scene::on_update (float delta) {
   cam.transform(matr<double>::make_rotation_y(rotY));
   cam.transform(matr<double>::make_rotation_z(rotZ));
 
+  double yaw   = 0.0;
+  double pitch = 0.0;
+  double roll  = 0.0;
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E)) {
+    yaw += delta;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
+    yaw -= delta;
+  }
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+    pitch += delta;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
+    pitch -= delta;
+  }
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C)) {
+    roll += delta;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::V)) {
+    roll -= delta;
+  }
+
+  cam.yaw(yaw);
+  cam.pitch(pitch);
+  cam.roll(roll);
+  
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) {
     proj = projection::orthogonal;
@@ -79,6 +108,32 @@ void igr::camera_scene::on_update (float delta) {
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3)) {
     proj = projection::oblique;
+  }
+
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+    cam.eye  = {3.0, 3.0, 3.0};
+    cam.look = {0.0, 0.0, 0.0};
+    cam.up   = {0.0, 1.0, 0.0};
+    cam.normalize();
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4)) {
+    cam.eye  = {3.0, 0.0, 0.0};
+    cam.look = {0.0, 0.0, 0.0};
+    cam.up   = {0.0, 1.0, 0.0};
+    cam.normalize();
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num5)) {
+    cam.eye  = {0.0, 3.0, 0.0};
+    cam.look = {0.0, 0.0, 0.0};
+    cam.up   = {0.0, 0.0, 1.0};
+    cam.normalize();
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6)) {
+    cam.eye  = {0.0, 0.0, 3.0};
+    cam.look = {0.0, 0.0, 0.0};
+    cam.up   = {0.0, 1.0, 0.0};
+    cam.normalize();
   }
 }
 

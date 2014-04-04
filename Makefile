@@ -57,10 +57,9 @@ $(TARGET): engine $(OBJS)
 engine:
 	$(MAKE) -C engine all
 
-.cpp.o:
+%.o: %.cpp engine 
 	$(CC) $(CFLAGS) $< -o $@
 
-.PHONY: lib
 lib:
 	$(shell) ./lib.sh
 
@@ -79,9 +78,15 @@ clean:
 	$(RM) $(TARGET) $(OBJS)
 	$(MAKE) -C engine clean
 
+ultraclean: clean
+	$(MAKE) -C engine ultraclean
+
 killall:
 	$(KILL) $(TARGET)
 
 full:
 	$(MAKE) clean
 	$(MAKE) run
+
+
+.PHONY: lib clean all full killall valgrind vg gdb run engine ultraclean

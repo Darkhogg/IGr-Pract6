@@ -1,38 +1,15 @@
 #include "camera_scene.hpp"
 
 void igr::camera_scene::on_begin () {
-  /* Set up lighting */
-  //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-  glEnable(GL_LIGHTING);
-  glShadeModel(GL_SMOOTH);
-
-  glEnable(GL_COLOR_MATERIAL);
-  glMaterialf(GL_FRONT, GL_SHININESS, 0.1f);
-
-
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_FRONT);
-
-  glEnable(GL_MULTISAMPLE);
-
-  glEnable(GL_DEPTH_TEST);
-  glDepthMask(GL_TRUE);
-  glDepthFunc(GL_LEQUAL);
-  glDepthRange(0.0f, 1.0f);
-
-   // Light0
+  // Light0
   glEnable(GL_LIGHT0);
-  GLfloat d[]={1.0, 1.0, 1.0, 1.0};
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, d);
-  GLfloat a[]={0.3f, 0.3f, 0.3f, 1.0};
-  glLightfv(GL_LIGHT0, GL_AMBIENT, a);
-  GLfloat p[]={25.0, 25.0, 0.0, 1.0};
-  glLightfv(GL_LIGHT0, GL_POSITION, p);
+  GLfloat lgtd[]={1.f, 1.f, 1.f, 1.f};
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, lgtd);
+  GLfloat lgta[]={0.3f, 0.3f, 0.3f, 1.f};
+  glLightfv(GL_LIGHT0, GL_AMBIENT, lgta);
+  GLfloat lgtp[]={25.f, 25.f, 0.f, 1.f};
+  glLightfv(GL_LIGHT0, GL_POSITION, lgtp);
 
-  // Box 
   box = mesh::make_aligned_box({1.f, 1.f, 1.f});
 }
 
@@ -100,6 +77,35 @@ void igr::camera_scene::on_update (float delta) {
   cam.roll(roll);
   
 
+  double mX = 0.0;
+  double mY = 0.0;
+  double mZ = 0.0;
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T)) {
+    mX += delta * 3.0;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Y)) {
+    mX -= delta * 3.0;
+  }
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G)) {
+    mY += delta * 3.0;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::H)) {
+    mY -= delta * 3.0;
+  }
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::B)) {
+    mZ += delta * 3.0;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::N)) {
+    mZ -= delta * 3.0;
+  }
+
+  cam.eye  = cam.eye + vec<double>{mX, mY, mZ, category::vector};
+  cam.look = cam.look + vec<double>{mX, mY, mZ, category::vector};
+
+
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) {
     proj = projection::orthogonal;
   }
@@ -124,9 +130,9 @@ void igr::camera_scene::on_update (float delta) {
     cam.normalize();
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num5)) {
-    cam.eye  = {0.0, 3.0, 0.0};
+    cam.eye  = {0.0, 3.0, 0.0001};
     cam.look = {0.0, 0.0, 0.0};
-    cam.up   = {0.0, 0.0, 1.0};
+    cam.up   = {0.0, 1.0, 0.0};
     cam.normalize();
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6)) {
@@ -143,9 +149,31 @@ void igr::camera_scene::on_draw () {
   glClearDepth(1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  /* Set up lighting */
+  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+  glEnable(GL_LIGHTING);
+  glShadeModel(GL_SMOOTH);
+
+  glEnable(GL_COLOR_MATERIAL);
+  glMaterialf(GL_FRONT, GL_SHININESS, 0.1f);
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_FRONT);
+
+  glEnable(GL_MULTISAMPLE);
+
+  glEnable(GL_DEPTH_TEST);
+  glDepthMask(GL_TRUE);
+  glDepthFunc(GL_LEQUAL);
+  glDepthRange(0.0f, 1.0f);
+
   /* Update the projection */
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
+
 
   auto aspect = (float) window.getSize().x / (float) window.getSize().y;
 

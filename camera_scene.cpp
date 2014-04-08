@@ -23,24 +23,24 @@ void igr::camera_scene::on_update (float delta) {
   double rotZ = 0.0;
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-    rotX += delta * 2.0;
+    rotX += delta * 3.0;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-    rotX -= delta * 2.0;
+    rotX -= delta * 3.0;
   }
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-    rotY += delta * 2.0;
+    rotY += delta * 3.0;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-    rotY -= delta * 2.0;
+    rotY -= delta * 3.0;
   }
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z)) {
-    rotZ += delta * 2.0;
+    rotZ += delta * 3.0;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::X)) {
-    rotZ -= delta * 2.0;
+    rotZ -= delta * 3.0;
   }
 
   auto oldUp = cam.up;
@@ -48,31 +48,31 @@ void igr::camera_scene::on_update (float delta) {
   cam.transform(matr<double>::make_rotation_y(rotY));
   cam.transform(matr<double>::make_rotation_z(rotZ));
   cam.up = oldUp;
-  cam.normalize();
+  //cam.normalize();
 
   double yaw   = 0.0;
   double pitch = 0.0;
   double roll  = 0.0;
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E)) {
-    yaw += delta;
+    yaw += delta * 3.0;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
-    yaw -= delta;
+    yaw -= delta * 3.0;
   }
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-    pitch += delta;
+    pitch += delta * 3.0;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
-    pitch -= delta;
+    pitch -= delta * 3.0;
   }
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C)) {
-    roll += delta;
+    roll += delta * 3.0;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::V)) {
-    roll -= delta;
+    roll -= delta * 3.0;
   }
 
   cam.yaw(yaw);
@@ -106,7 +106,7 @@ void igr::camera_scene::on_update (float delta) {
   }
 
   cam.eye  = cam.eye + vec<double>{mX, mY, mZ, category::vector};
-  cam.look = cam.look + vec<double>{mX, mY, mZ, category::vector};
+  //cam.look = cam.look + vec<double>{mX, mY, mZ, category::vector};
 
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) {
@@ -124,25 +124,25 @@ void igr::camera_scene::on_update (float delta) {
     cam.eye  = {3.0, 3.0, 3.0};
     cam.look = {0.0, 0.0, 0.0};
     cam.up   = {0.0, 1.0, 0.0};
-    cam.normalize();
+    //cam.normalize();
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4)) {
     cam.eye  = {3.0, 0.0, 0.0};
     cam.look = {0.0, 0.0, 0.0};
     cam.up   = {0.0, 1.0, 0.0};
-    cam.normalize();
+    //cam.normalize();
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num5)) {
     cam.eye  = {0.0, 3.0, 0.0001};
     cam.look = {0.0, 0.0, 0.0};
     cam.up   = {0.0, 1.0, 0.0};
-    cam.normalize();
+    //cam.normalize();
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6)) {
     cam.eye  = {0.0, 0.0, 3.0};
     cam.look = {0.0, 0.0, 0.0};
     cam.up   = {0.0, 1.0, 0.0};
-    cam.normalize();
+    //cam.normalize();
   }
 }
 

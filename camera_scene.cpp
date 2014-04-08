@@ -23,29 +23,32 @@ void igr::camera_scene::on_update (float delta) {
   double rotZ = 0.0;
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-    rotX += delta;
+    rotX += delta * 2.0;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-    rotX -= delta;
+    rotX -= delta * 2.0;
   }
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-    rotY += delta;
+    rotY += delta * 2.0;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-    rotY -= delta;
+    rotY -= delta * 2.0;
   }
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z)) {
-    rotZ += delta;
+    rotZ += delta * 2.0;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::X)) {
-    rotZ -= delta;
+    rotZ -= delta * 2.0;
   }
 
+  auto oldUp = cam.up;
   cam.transform(matr<double>::make_rotation_x(rotX));
   cam.transform(matr<double>::make_rotation_y(rotY));
   cam.transform(matr<double>::make_rotation_z(rotZ));
+  cam.up = oldUp;
+  cam.normalize();
 
   double yaw   = 0.0;
   double pitch = 0.0;

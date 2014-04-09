@@ -13,7 +13,7 @@ void igr::camera_scene::on_begin () {
   GLfloat lgtp[]={25.f, 25.f, 0.f, 1.f};
   glLightfv(GL_LIGHT0, GL_POSITION, lgtp);
 
-  spheres[0] = mesh::make_aligned_sphere({1.f, 1.f, 1.f}, BIG_SPHERE, BIG_SPHERE);
+  spheres[0] = mesh::make_aligned_box({1.f, 1.f, 1.f});//mesh::make_aligned_sphere({1.f, 1.f, 1.f}, BIG_SPHERE, BIG_SPHERE);
 
   spheres[1] = mesh::make_aligned_sphere({1.f, 0.f, 0.f}, SMALL_SPHERE, SMALL_SPHERE);
   spheres[1].transform(matr<double>::make_scalation({0.3, 0.3, 0.3}));
@@ -209,7 +209,19 @@ void igr::camera_scene::on_draw () {
     }
 
     case projection::oblique: {
+      vec<double> oblique_vector {0.1, 0.1, 1, category::vector};
+      auto d = oblique_vector.normalized();
 
+      double N = 1;
+      float m[] = { // COLUMN MAJOR!!
+                    1.f,               0.f,   0.f,   0.f,
+                    0.f,               1.f,   0.f,   0.f,
+            - d.x / d.z,       - d.y / d.z,   1.f,   0.f,
+        - N * d.x / d.z,   - N * d.y / d.z,   0.f,   1.f
+      };
+
+      glOrtho(-aspect, aspect, -1.0, 1.0, 0.1, 1000.0);
+      glMultMatrixf(m);
 
       break;
     }
@@ -221,16 +233,16 @@ void igr::camera_scene::on_draw () {
   /* Draw axis */
   glBegin(GL_LINES);
     glColor3f(1.f, 0.f, 0.f);
-    glVertex3f(-10.f, 0.f, 0.f);
-    glVertex3f(+10.f, 0.f, 0.f);
+    glVertex3f(-100.f, 0.f, 0.f);
+    glVertex3f(+100.f, 0.f, 0.f);
 
     glColor3f(0.f, 0.8f, 0.f);
-    glVertex3f(0.f, -10.f, 0.f);
-    glVertex3f(0.f, +10.f, 0.f);
+    glVertex3f(0.f, -100.f, 0.f);
+    glVertex3f(0.f, +100.f, 0.f);
 
     glColor3f(0.f, 0.5f, 1.f);
-    glVertex3f(0.f, 0.f, -10.f);
-    glVertex3f(0.f, 0.f, +10.f);
+    glVertex3f(0.f, 0.f, -100.f);
+    glVertex3f(0.f, 0.f, +100.f);
   glEnd();
 
   /* Draw box */

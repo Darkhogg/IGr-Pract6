@@ -12,7 +12,7 @@ namespace igr {
 
   class camera_scene : public scene<camera_scene> {
       camera cam;
-      mesh box;
+      std::array<mesh, 4> spheres;
       projection proj;
 
     public:

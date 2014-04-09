@@ -1,5 +1,8 @@
 #include "camera_scene.hpp"
 
+#define BIG_SPHERE 64
+#define SMALL_SPHERE 24
+
 void igr::camera_scene::on_begin () {
   // Light0
   glEnable(GL_LIGHT0);
@@ -10,7 +13,19 @@ void igr::camera_scene::on_begin () {
   GLfloat lgtp[]={25.f, 25.f, 0.f, 1.f};
   glLightfv(GL_LIGHT0, GL_POSITION, lgtp);
 
-  box = mesh::make_aligned_box({1.f, 1.f, 1.f});
+  spheres[0] = mesh::make_aligned_sphere({1.f, 1.f, 1.f}, BIG_SPHERE, BIG_SPHERE);
+
+  spheres[1] = mesh::make_aligned_sphere({1.f, 0.f, 0.f}, SMALL_SPHERE, SMALL_SPHERE);
+  spheres[1].transform(matr<double>::make_scalation({0.3, 0.3, 0.3}));
+  spheres[1].transform(matr<double>::make_translation({0.75, 0.0, 0.0}));
+
+  spheres[2] = mesh::make_aligned_sphere({0.f, 1.f, 0.f}, SMALL_SPHERE, SMALL_SPHERE);
+  spheres[2].transform(matr<double>::make_scalation({0.3, 0.3, 0.3}));
+  spheres[2].transform(matr<double>::make_translation({0.0, 0.75, 0.0}));
+
+  spheres[3] = mesh::make_aligned_sphere({0.f, 0.f, 1.f}, SMALL_SPHERE, SMALL_SPHERE);
+  spheres[3].transform(matr<double>::make_scalation({0.3, 0.3, 0.3}));
+  spheres[3].transform(matr<double>::make_translation({0.0, 0.0, 0.75}));
 }
 
 bool igr::camera_scene::on_event (event_t event) {
@@ -219,7 +234,9 @@ void igr::camera_scene::on_draw () {
   glEnd();
 
   /* Draw box */
-  box.gl_draw_immediate();
+  for (auto sphere : spheres) {
+    sphere.gl_draw_immediate();
+  }
 }
 
 void igr::camera_scene::on_end () {

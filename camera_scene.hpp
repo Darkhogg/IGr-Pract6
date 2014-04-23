@@ -4,6 +4,12 @@
 #include "engine/mesh.hpp"
 #include "engine/matr.hpp"
 
+#include <memory>
+
+#include "scene_object.hpp"
+#include "composite_scene_object.hpp"
+#include "mesh_scene_object.hpp"
+#include "transformed_scene_object.hpp"
 
 namespace igr {
   enum class projection {
@@ -12,7 +18,7 @@ namespace igr {
 
   class camera_scene : public scene<camera_scene> {
       camera cam;
-      std::array<mesh, 4> spheres;
+      std::shared_ptr<scene_object> obj;
       projection proj;
 
     public:

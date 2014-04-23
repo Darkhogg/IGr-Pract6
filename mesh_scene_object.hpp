@@ -1,3 +1,6 @@
+#ifndef __MESH_SCENE_OBJECT__HPP__
+#define __MESH_SCENE_OBJECT__HPP__
+
 #include "scene_object.hpp"
 
 #include "engine/mesh.hpp"
@@ -16,3 +19,5 @@ namespace igr {
   };
 
 }
+
+#endif

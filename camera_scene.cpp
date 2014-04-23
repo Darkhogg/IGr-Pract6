@@ -1,7 +1,6 @@
 #include "camera_scene.hpp"
 
-#define BIG_SPHERE 64
-#define SMALL_SPHERE 24
+#define SPHERE 64
 
 void igr::camera_scene::on_begin () {
   // Light0
@@ -13,6 +12,42 @@ void igr::camera_scene::on_begin () {
   GLfloat lgtp[]={25.f, 25.f, 0.f, 1.f};
   glLightfv(GL_LIGHT0, GL_POSITION, lgtp);
 
+  auto comp_obj = std::make_shared<composite_scene_object>();
+
+  auto box_mesh = mesh::make_aligned_box({1.f, 1.f, 1.f});
+  auto box_obj  = std::make_shared<mesh_scene_object>(box_mesh);
+
+  auto rsph_mesh  = mesh::make_aligned_sphere({1.f, 0.f, 0.f}, SPHERE, SPHERE);
+  auto rsph_trans = matr<double>::make_translation({0.8, 0.0, 0.0})
+                  * matr<double>::make_scalation({0.3, 0.3, 0.3});
+  auto rsph_obj   = std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(rsph_mesh),
+    rsph_trans
+  );
+
+  auto gsph_mesh  = mesh::make_aligned_sphere({0.f, 1.f, 0.f}, SPHERE, SPHERE);
+  auto gsph_trans = matr<double>::make_translation({0.0, 0.8, 0.0})
+                  * matr<double>::make_scalation({0.3, 0.3, 0.3});
+  auto gsph_obj   = std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(gsph_mesh),
+    gsph_trans
+  );
+  auto bsph_mesh  = mesh::make_aligned_sphere({0.f, 0.f, 1.f}, SPHERE, SPHERE);
+  auto bsph_trans = matr<double>::make_translation({0.0, 0.0, 0.8})
+                  * matr<double>::make_scalation({0.3, 0.3, 0.3});
+  auto bsph_obj   = std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(bsph_mesh),
+    bsph_trans
+  );
+
+  comp_obj->add_object(box_obj);
+  comp_obj->add_object(rsph_obj);
+  comp_obj->add_object(gsph_obj);
+  comp_obj->add_object(bsph_obj);
+
+  obj = comp_obj;
+
+  /*
   spheres[0] = mesh::make_aligned_box({1.f, 1.f, 1.f});//mesh::make_aligned_sphere({1.f, 1.f, 1.f}, BIG_SPHERE, BIG_SPHERE);
 
   spheres[1] = mesh::make_aligned_sphere({1.f, 0.f, 0.f}, SMALL_SPHERE, SMALL_SPHERE);
@@ -26,6 +61,7 @@ void igr::camera_scene::on_begin () {
   spheres[3] = mesh::make_aligned_sphere({0.f, 0.f, 1.f}, SMALL_SPHERE, SMALL_SPHERE);
   spheres[3].transform(matr<double>::make_scalation({0.3, 0.3, 0.3}));
   spheres[3].transform(matr<double>::make_translation({0.0, 0.0, 0.75}));
+  */
 }
 
 bool igr::camera_scene::on_event (event_t event) {
@@ -246,9 +282,7 @@ void igr::camera_scene::on_draw () {
   glEnd();
 
   /* Draw box */
-  for (auto sphere : spheres) {
-    sphere.gl_draw_immediate();
-  }
+  obj->draw_object();
 }
 
 void igr::camera_scene::on_end () {

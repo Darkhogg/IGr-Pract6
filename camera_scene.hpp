@@ -4,7 +4,7 @@
 #include "engine/mesh.hpp"
 #include "engine/matr.hpp"
 
-
+#include <ostream>
 #include <memory>
 
 #include "scene_object.hpp"

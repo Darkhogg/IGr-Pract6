@@ -3,20 +3,99 @@
 #define SPHERE 64
 
 void igr::camera_scene::on_begin () {
-  // Light0
-  glEnable(GL_LIGHT0);
-  GLfloat lgtd[]={1.f, 1.f, 1.f, 1.f};
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lgtd);
-  GLfloat lgta[]={0.3f, 0.3f, 0.3f, 1.f};
-  glLightfv(GL_LIGHT0, GL_AMBIENT, lgta);
-  GLfloat lgtp[]={25.f, 25.f, 0.f, 1.f};
-  glLightfv(GL_LIGHT0, GL_POSITION, lgtp);
+  proj = projection::perspective;
 
   /* Generate the pool table */
-  auto green_table = std::make_shared<transformed_scene_object>(
-    matr<double>{},
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_box({1.f, 1.f, 1.f}))
+  color brown {0.7f, 0.3f, 0.f};
+  color green {0.f, 0.3f, 0.f};
+
+  /* Green cube asthe board */
+  auto green_board = std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(green)),
+    matr<double>::make_translation({0.0, 0.01, 0.0})
+    * matr<double>::make_scalation({2.0, 0.1, 1.0})
   );
+
+  /* Brown top-left leg */
+  auto tl_leg = std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    matr<double>::make_translation({0.94, -0.5, 0.44})
+    * matr<double>::make_scalation({0.15, 1.0, 0.15})
+    * matr<double>::make_rotation_x(M_PI_2)
+  );
+
+  /* Brown top-right leg */
+  auto tr_leg = std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    matr<double>::make_translation({-0.94, -0.5, 0.44})
+    * matr<double>::make_scalation({0.15, 1.0, 0.15})
+    * matr<double>::make_rotation_x(M_PI_2)
+  );
+
+  /* Brown bottom-left leg */
+  auto bl_leg = std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    matr<double>::make_translation({0.94, -0.5, -0.44})
+    * matr<double>::make_scalation({0.15, 1.0, 0.15})
+    * matr<double>::make_rotation_x(M_PI_2)
+  );
+
+  /* Brown bottom-right leg */
+  auto br_leg = std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    matr<double>::make_translation({-0.94, -0.5, -0.44})
+    * matr<double>::make_scalation({0.15, 1.0, 0.15})
+    * matr<double>::make_rotation_x(M_PI_2)
+  );
+
+  /* Frame (5 pieces!) */
+  auto frame = std::make_shared<composite_scene_object>();
+
+  /* Under wood */
+  frame->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    matr<double>::make_translation({0.0, 0.0, 0.0})
+    * matr<double>::make_scalation({2.0, 0.1, 1.0})
+  ));
+
+  /* Top wood */
+  frame->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    matr<double>::make_translation({1.05, 0.04, 0.0})
+    * matr<double>::make_scalation({0.1, 0.18, 1.0})
+  ));
+
+  /* Bottom wood */
+  frame->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    matr<double>::make_translation({-1.05, 0.04, 0.0})
+    * matr<double>::make_scalation({0.1, 0.18, 1.0})
+  ));
+
+  /* Left wood */
+  frame->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    matr<double>::make_translation({0.0, 0.04, 0.55})
+    * matr<double>::make_scalation({2.2, 0.18, 0.1})
+  ));
+
+  /* Left wood */
+  frame->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    matr<double>::make_translation({0.0, 0.04, -0.55})
+    * matr<double>::make_scalation({2.2, 0.18, 0.1})
+  ));
+
+  /* Table */
+  auto table = std::make_shared<composite_scene_object>();
+  table->add_object(green_board);
+  table->add_object(frame);
+  table->add_object(tl_leg);
+  table->add_object(tr_leg);
+  table->add_object(bl_leg);
+  table->add_object(br_leg);
+
+  obj = table;
 }
 
 bool igr::camera_scene::on_event (event_t event) {
@@ -153,6 +232,12 @@ void igr::camera_scene::on_update (float delta) {
 }
 
 void igr::camera_scene::on_draw () {
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
   /* Clear the scene */
   glClearColor(0.15f, 0.175f, 0.2f, 1.f);
   glClearDepth(1.0f);
@@ -163,8 +248,18 @@ void igr::camera_scene::on_draw () {
   glEnable(GL_LIGHTING);
   glShadeModel(GL_SMOOTH);
 
+  glEnable(GL_LIGHT0);
+  GLfloat lgtd[] = {0.3f, 0.3f, 0.3f, 1.f};
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, lgtd);
+  GLfloat lgta[] = {0.1f, 0.1f, 0.1f, 1.f};
+  glLightfv(GL_LIGHT0, GL_AMBIENT, lgta);
+  GLfloat lgtp[] = {25.f, 25.f, 0.f, 1.f};
+  glLightfv(GL_LIGHT0, GL_POSITION, lgtp);
+  GLfloat lgts[] = {0.f, 0.f, 0.f, 1.f};
+  glLightfv(GL_LIGHT0, GL_SPECULAR, lgts);
+
   glEnable(GL_COLOR_MATERIAL);
-  glMaterialf(GL_FRONT, GL_SHININESS, 0.1f);
+  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.1f);
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

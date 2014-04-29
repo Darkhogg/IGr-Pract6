@@ -1,3 +1,6 @@
+#ifndef __TRANSFORMED_SCENE_OBJECT__HPP__
+#define __TRANSFORMED_SCENE_OBJECT__HPP__
+
 #include <memory>
 
 #include "scene_object.hpp"
@@ -18,3 +21,5 @@ namespace igr {
   };
 
 }
+
+#endif

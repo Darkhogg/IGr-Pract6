@@ -1,7 +1,6 @@
 #include "camera_scene.hpp"
 
-#define BIG_SPHERE 64
-#define SMALL_SPHERE 24
+#define SPHERE 64
 
 void igr::camera_scene::on_begin () {
   // Light0

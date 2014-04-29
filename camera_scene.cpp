@@ -13,19 +13,11 @@ void igr::camera_scene::on_begin () {
   GLfloat lgtp[]={25.f, 25.f, 0.f, 1.f};
   glLightfv(GL_LIGHT0, GL_POSITION, lgtp);
 
-  spheres[0] = mesh::make_aligned_box({1.f, 1.f, 1.f});//mesh::make_aligned_sphere({1.f, 1.f, 1.f}, BIG_SPHERE, BIG_SPHERE);
-
-  spheres[1] = mesh::make_aligned_sphere({1.f, 0.f, 0.f}, SMALL_SPHERE, SMALL_SPHERE);
-  spheres[1].transform(matr<double>::make_scalation({0.3, 0.3, 0.3}));
-  spheres[1].transform(matr<double>::make_translation({0.75, 0.0, 0.0}));
-
-  spheres[2] = mesh::make_aligned_sphere({0.f, 1.f, 0.f}, SMALL_SPHERE, SMALL_SPHERE);
-  spheres[2].transform(matr<double>::make_scalation({0.3, 0.3, 0.3}));
-  spheres[2].transform(matr<double>::make_translation({0.0, 0.75, 0.0}));
-
-  spheres[3] = mesh::make_aligned_sphere({0.f, 0.f, 1.f}, SMALL_SPHERE, SMALL_SPHERE);
-  spheres[3].transform(matr<double>::make_scalation({0.3, 0.3, 0.3}));
-  spheres[3].transform(matr<double>::make_translation({0.0, 0.0, 0.75}));
+  /* Generate the pool table */
+  auto green_table = std::make_shared<transformed_scene_object>(
+    matr<double>{},
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box({1.f, 1.f, 1.f}))
+  );
 }
 
 bool igr::camera_scene::on_event (event_t event) {
@@ -212,7 +204,7 @@ void igr::camera_scene::on_draw () {
       vec<double> oblique_vector {0.1, 0.1, 1, category::vector};
       auto d = oblique_vector.normalized();
 
-      double N = 1;
+      double N = 0.1;
       float m[] = { // COLUMN MAJOR!!
                     1.f,               0.f,   0.f,   0.f,
                     0.f,               1.f,   0.f,   0.f,
@@ -246,9 +238,7 @@ void igr::camera_scene::on_draw () {
   glEnd();
 
   /* Draw box */
-  for (auto sphere : spheres) {
-    sphere.gl_draw_immediate();
-  }
+  obj->draw_object();
 }
 
 void igr::camera_scene::on_end () {

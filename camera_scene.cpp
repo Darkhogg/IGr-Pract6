@@ -6,7 +6,7 @@ void igr::camera_scene::on_begin () {
   proj = projection::perspective;
 
   /* Generate the pool table */
-  color brown {0.7f, 0.3f, 0.f};
+  color brown {0.7f, 0.1f, 0.f};
   color green {0.f, 0.3f, 0.f};
 
   /* Green cube asthe board */
@@ -86,6 +86,70 @@ void igr::camera_scene::on_begin () {
     * matr<double>::make_scalation({2.2, 0.18, 0.1})
   ));
 
+  /* Stick (2 pieces!) */
+  auto stick = std::make_shared<composite_scene_object>();
+
+  stick->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    matr<double>{}
+  ));
+
+  stick->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(colors::white, 64)),
+    matr<double>::make_translation({0.0, 0.0, -0.51})
+    * matr<double>::make_scalation({1.0, 1.0, 0.02})
+  ));
+
+  auto stickt = std::make_shared<transformed_scene_object>(
+    stick,
+    matr<double>::make_translation({0.9, 0.15, 0.5})
+    * matr<double>::make_rotation_x(0.1)
+    * matr<double>::make_scalation({0.02, 0.02, 1.7})
+  );
+
+  /* Balls (16 pieces!) */
+  auto balls = std::make_shared<composite_scene_object>();
+  double dx = 0.05 * sin(M_PI / 3);
+  double dz = 0.05;
+
+  balls->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_sphere(colors::white, 32, 32)),
+    matr<double>::make_translation({0.5, 0.1, 0.0})
+    * matr<double>::make_scalation({0.08, 0.08, 0.08})
+  ));
+
+  balls->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_sphere({0.1f, 0.1f, 0.1f}, 32, 32)),
+    matr<double>::make_translation({-0.3 - dx * 4, 0.1, 0.0})
+    * matr<double>::make_scalation({0.08, 0.08, 0.08})
+  ));
+
+  std::vector<vec<double>> vecs = {
+    {0.0, 0.0, 0.0},
+    {-dx * 2, 0.0, -dz},
+    {-dx * 2, 0.0, +dz},
+    {-dx * 4, 0.0, -dz * 2},
+    //{-dx * 4, 0.0, 0.0},
+    {-dx * 4, 0.0, +dx * 2},
+    {-dx * 6, 0.0, -dz * 3},
+    {-dx * 6, 0.0, -dz},
+    {-dx * 6, 0.0, +dz},
+    {-dx * 6, 0.0, +dz * 3},
+    {-dx * 8, 0.0, -dz * 4},
+    {-dx * 8, 0.0, -dz * 2},
+    {-dx * 8, 0.0, 0.0},
+    {-dx * 8, 0.0, +dz * 2},
+    {-dx * 8, 0.0, +dz * 4},
+  };
+
+  for (auto v : vecs) {
+    balls->add_object(std::make_shared<transformed_scene_object>(
+      std::make_shared<mesh_scene_object>(mesh::make_aligned_sphere({0.2f, 0.2f, 0.3f}, 32, 32)),
+      matr<double>::make_translation(v + vec<double>{-0.3, 0.1, 0.0})
+      * matr<double>::make_scalation({0.08, 0.08, 0.08})
+    ));
+  }
+
   /* Table */
   auto table = std::make_shared<composite_scene_object>();
   table->add_object(green_board);
@@ -94,6 +158,8 @@ void igr::camera_scene::on_begin () {
   table->add_object(tr_leg);
   table->add_object(bl_leg);
   table->add_object(br_leg);
+  table->add_object(stickt);
+  table->add_object(balls);
 
   obj = table;
 }
@@ -317,6 +383,7 @@ void igr::camera_scene::on_draw () {
   cam.gl_update();
 
   /* Draw axis */
+  glDisable(GL_LIGHTING);
   glBegin(GL_LINES);
     glColor3f(1.f, 0.f, 0.f);
     glVertex3f(-100.f, 0.f, 0.f);
@@ -330,6 +397,7 @@ void igr::camera_scene::on_draw () {
     glVertex3f(0.f, 0.f, -100.f);
     glVertex3f(0.f, 0.f, +100.f);
   glEnd();
+  glEnable(GL_LIGHTING);
 
   /* Draw box */
   obj->draw_object();

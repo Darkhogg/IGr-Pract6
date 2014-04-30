@@ -161,7 +161,7 @@ void igr::camera_scene::on_begin () {
   table->add_object(stickt);
   table->add_object(balls);
 
-  obj = table;
+  obj = std::make_shared<transformed_scene_object>(table, matr<double>{});
 }
 
 bool igr::camera_scene::on_event (event_t event) {
@@ -276,7 +276,10 @@ void igr::camera_scene::on_update (float delta) {
     cam.look = {0.0, 0.0, 0.0};
     cam.up   = {0.0, 1.0, 0.0};
     //cam.normalize();
+
+    obj->trans = matr<double>{};
   }
+
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4)) {
     cam.eye  = {3.0, 0.0, 0.0};
     cam.look = {0.0, 0.0, 0.0};
@@ -294,6 +297,19 @@ void igr::camera_scene::on_update (float delta) {
     cam.look = {0.0, 0.0, 0.0};
     cam.up   = {0.0, 1.0, 0.0};
     //cam.normalize();
+  }
+
+
+  /* Scene transforms */
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::U)) {
+    obj->trans = matr<double>::make_translation({delta, 0.0, 0.0}) * obj->trans;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::J)) {
+    obj->trans = matr<double>::make_scalation({1.0, 1.0 + delta, 1.0}) * obj->trans;
+  }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M)) {
+    obj->trans = matr<double>::make_rotation_z(delta) * obj->trans;
   }
 }
 

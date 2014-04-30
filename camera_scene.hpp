@@ -19,7 +19,7 @@ namespace igr {
 
   class camera_scene : public scene<camera_scene> {
       camera cam;
-      std::shared_ptr<scene_object> obj;
+      std::shared_ptr<transformed_scene_object> obj;
       projection proj;
 
     public:

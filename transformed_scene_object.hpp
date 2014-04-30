@@ -10,9 +10,9 @@ namespace igr {
 
   class transformed_scene_object : public scene_object {
       std::shared_ptr<scene_object> obj;
-      matr<double> trans;
 
     public:
+      matr<double> trans;
       transformed_scene_object (std::shared_ptr<scene_object> obj, matr<double> trans)
         : obj{obj}, trans{trans}
         {}

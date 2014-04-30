@@ -150,6 +150,23 @@ void igr::camera_scene::on_begin () {
     ));
   }
 
+  /* Chalk */
+  auto chalk = std::make_shared<composite_scene_object>();
+
+  chalk->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(colors::white)),
+    matr<double>::make_translation({1.05, 0.15, 0.3})
+    * matr<double>::make_scalation({0.05, 0.05, 0.05})
+  ));
+
+  chalk->add_object(std::make_shared<transformed_scene_object>(
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box({0.0, 0.0, 1.0})),
+    matr<double>::make_translation({1.05, 0.175, 0.3})
+    * matr<double>::make_scalation({0.05, 0.005, 0.05})
+  ));
+
+  //chalk->add_object();
+
   /* Table */
   auto table = std::make_shared<composite_scene_object>();
   table->add_object(green_board);
@@ -160,6 +177,7 @@ void igr::camera_scene::on_begin () {
   table->add_object(br_leg);
   table->add_object(stickt);
   table->add_object(balls);
+  table->add_object(chalk);
 
   obj = std::make_shared<transformed_scene_object>(table, matr<double>{});
 }
@@ -416,6 +434,7 @@ void igr::camera_scene::on_draw () {
   glEnable(GL_LIGHTING);
 
   /* Draw box */
+  glPolygonMode(GL_FRONT_AND_BACK, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::I) ? GL_LINE : GL_FILL);
   obj->draw_object();
 }
 

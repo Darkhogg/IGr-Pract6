@@ -1,7 +1,10 @@
 #include "board.hpp"
 
+#define CYL_MESH 16
+#define SPH_MESH 12
+
 igr::board::board () {
-  
+
   /* Generate the pool table */
   color brown {0.7f, 0.1f, 0.f};
   color green {0.f, 0.3f, 0.f};
@@ -15,7 +18,7 @@ igr::board::board () {
 
   /* Brown top-left leg */
   auto tl_leg = std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, CYL_MESH)),
     matr<double>::make_translation({0.94, -0.5, 0.44})
     * matr<double>::make_scalation({0.15, 1.0, 0.15})
     * matr<double>::make_rotation_x(M_PI_2)
@@ -23,7 +26,7 @@ igr::board::board () {
 
   /* Brown top-right leg */
   auto tr_leg = std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, CYL_MESH)),
     matr<double>::make_translation({-0.94, -0.5, 0.44})
     * matr<double>::make_scalation({0.15, 1.0, 0.15})
     * matr<double>::make_rotation_x(M_PI_2)
@@ -31,7 +34,7 @@ igr::board::board () {
 
   /* Brown bottom-left leg */
   auto bl_leg = std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, CYL_MESH)),
     matr<double>::make_translation({0.94, -0.5, -0.44})
     * matr<double>::make_scalation({0.15, 1.0, 0.15})
     * matr<double>::make_rotation_x(M_PI_2)
@@ -39,7 +42,7 @@ igr::board::board () {
 
   /* Brown bottom-right leg */
   auto br_leg = std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, CYL_MESH)),
     matr<double>::make_translation({-0.94, -0.5, -0.44})
     * matr<double>::make_scalation({0.15, 1.0, 0.15})
     * matr<double>::make_rotation_x(M_PI_2)
@@ -87,12 +90,12 @@ igr::board::board () {
   auto stick = std::make_shared<composite_scene_object>();
 
   stick->add_object(std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, 64)),
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(brown, CYL_MESH)),
     matr<double>{}
   ));
 
   stick->add_object(std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(colors::white, 64)),
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_cylinder(colors::white, CYL_MESH)),
     matr<double>::make_translation({0.0, 0.0, -0.51})
     * matr<double>::make_scalation({1.0, 1.0, 0.02})
   ));
@@ -110,13 +113,13 @@ igr::board::board () {
   double dz = 0.05;
 
   balls->add_object(std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_sphere(colors::white, 32, 32)),
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_sphere(colors::white, SPH_MESH, SPH_MESH)),
     matr<double>::make_translation({0.5, 0.1, 0.0})
     * matr<double>::make_scalation({0.08, 0.08, 0.08})
   ));
 
   balls->add_object(std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_sphere({0.1f, 0.1f, 0.1f}, 32, 32)),
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_sphere({0.1f, 0.1f, 0.1f}, SPH_MESH, SPH_MESH)),
     matr<double>::make_translation({-0.3 - dx * 4, 0.1, 0.0})
     * matr<double>::make_scalation({0.08, 0.08, 0.08})
   ));
@@ -141,7 +144,7 @@ igr::board::board () {
 
   for (auto v : vecs) {
     balls->add_object(std::make_shared<transformed_scene_object>(
-      std::make_shared<mesh_scene_object>(mesh::make_aligned_sphere({0.2f, 0.2f, 0.3f}, 32, 32)),
+      std::make_shared<mesh_scene_object>(mesh::make_aligned_sphere({0.2f, 0.2f, 0.3f}, SPH_MESH, SPH_MESH)),
       matr<double>::make_translation(v + vec<double>{-0.3, 0.1, 0.0})
       * matr<double>::make_scalation({0.08, 0.08, 0.08})
     ));

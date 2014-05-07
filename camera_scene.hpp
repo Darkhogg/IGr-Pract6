@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "board.hpp"
+#include "transformed_scene_object.hpp"
 
 namespace igr {
   enum class projection {

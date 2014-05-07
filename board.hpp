@@ -11,10 +11,12 @@
 /* Made against my will -- inheritance abuse follows */
 namespace igr {
   class board : public scene_object {
-      std::shared_ptr obj;
+      std::shared_ptr<scene_object> obj;
 
     public:
-      void draw_object ();
+      board ();
+
+      void draw_object () {obj->draw_object();}
   };
 }
 

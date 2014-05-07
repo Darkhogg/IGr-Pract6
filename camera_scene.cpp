@@ -4,7 +4,10 @@
 
 void igr::camera_scene::on_begin () {
   proj = projection::perspective;
-  obj = std::make_shared<board>();
+  obj = std::make_shared<transformed_scene_object>(
+    std::make_shared<board>(),
+    matr<double>{}
+  );
 }
 
 bool igr::camera_scene::on_event (event_t event) {

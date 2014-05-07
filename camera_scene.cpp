@@ -259,6 +259,7 @@ void igr::camera_scene::on_draw () {
   glEnable(GL_LIGHTING);
 
   /* Draw box */
+  glPolygonMode(GL_FRONT_AND_BACK, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::I) ? GL_LINE : GL_FILL);
   obj->draw_object();
 }
 

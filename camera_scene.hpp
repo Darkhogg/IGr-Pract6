@@ -7,10 +7,7 @@
 #include <ostream>
 #include <memory>
 
-#include "scene_object.hpp"
-#include "composite_scene_object.hpp"
-#include "mesh_scene_object.hpp"
-#include "transformed_scene_object.hpp"
+#include "board.hpp"
 
 namespace igr {
   enum class projection {

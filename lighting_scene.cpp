@@ -15,9 +15,9 @@ void igr::lighting_scene::on_begin () {
   sun_light.specular = {0.2, 0.2, 0.2};
 
   //lamp_light.position  = {0.0, 1.0, 0.0, category::point};
-  lamp_light.ambient   = {0.1, 0.1, 0.1};
-  lamp_light.diffuse   = {0.8, 0.8, 0.8};
-  lamp_light.specular  = {1.0, 1.0, 1.0};
+  lamp_light.ambient   = {0.1, 0.1, 0.0};
+  lamp_light.diffuse   = {0.8, 0.8, 0.4};
+  lamp_light.specular  = {1.0, 1.0, 0.5};
   lamp_light.cutoff    = 30.0;
   lamp_light.exponent  = 48.0;
   //lamp_light.direction = {-2.0, -1.0, 0.0, category::vector};
@@ -346,10 +346,12 @@ void igr::lighting_scene::on_draw () {
   cyl.transform(matr<double>::make_translation(lamp_light.position));
   cyl.gl_draw_immediate();
 
-  GLfloat emw[] = {1.f, 1.f, 1.f, 1.f};
-  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emw);
+  if (lamp_on) {
+    GLfloat emw[] = {1.f, 1.f, 0.5f, 1.f};
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emw);
+  }
 
-  auto bulb = mesh::make_aligned_sphere(colors::white, 32, 32);
+  auto bulb = mesh::make_aligned_sphere(lamp_on ? color{1.0, 1.0, 0.5} : color{0.5, 0.5, 0.1}, 32, 32);
   bulb.transform(matr<double>::make_scalation({0.1, 0.1, 0.1}));
   bulb.transform(matr<double>::make_translation(lamp_light.position));
   bulb.gl_draw_immediate();

@@ -3,6 +3,7 @@
 #include "engine/camera.hpp"
 #include "engine/mesh.hpp"
 #include "engine/matr.hpp"
+#include "engine/gl_light.hpp"
 
 #include <ostream>
 #include <memory>
@@ -15,15 +16,20 @@ namespace igr {
     orthogonal, perspective, oblique
   };
 
-  class camera_scene : public scene<camera_scene> {
+  class lighting_scene : public scene<lighting_scene> {
+      double time;
+
       camera cam;
       std::shared_ptr<transformed_scene_object> obj;
       projection proj;
 
+      gl_light lamp_light, sun_light;
+      bool lamp_on, sun_on, ambient_on;
+
     public:
-      camera_scene()
+      lighting_scene()
         : scene {"Práctica 6 - Daniel Escoz Solana"},
-          cam{{3.0, 3.0, 3.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}},
+          cam{{2.0, 2.0, 2.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}},
           proj{projection::orthogonal}
       {}
 

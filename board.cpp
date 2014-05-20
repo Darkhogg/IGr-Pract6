@@ -11,7 +11,7 @@ igr::board::board () {
 
   /* Green cube asthe board */
   auto green_board = std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(green)),
+    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(green, 48)),
     matr<double>::make_translation({0.0, 0.01, 0.0})
     * matr<double>::make_scalation({2.0, 0.1, 1.0})
   );
@@ -130,7 +130,7 @@ igr::board::board () {
     {-dx * 2, 0.0, +dz},
     {-dx * 4, 0.0, -dz * 2},
     //{-dx * 4, 0.0, 0.0},
-    {-dx * 4, 0.0, +dx * 2},
+    {-dx * 4, 0.0, +dz * 2},
     {-dx * 6, 0.0, -dz * 3},
     {-dx * 6, 0.0, -dz},
     {-dx * 6, 0.0, +dz},

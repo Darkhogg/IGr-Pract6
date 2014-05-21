@@ -25,10 +25,11 @@ namespace igr {
 
       gl_light lamp_light, sun_light;
       bool lamp_on, sun_on, ambient_on;
+      double lamp_scale;
 
     public:
       lighting_scene()
-        : scene {"Práctica 6 - Daniel Escoz Solana"},
+        : scene {"Práctica 7 - Daniel Escoz Solana"},
           cam{{2.0, 2.0, 2.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}},
           proj{projection::orthogonal}
       {}

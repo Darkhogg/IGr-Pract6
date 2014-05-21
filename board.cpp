@@ -9,12 +9,20 @@ igr::board::board () {
   color brown {0.7f, 0.1f, 0.f};
   color green {0.f, 0.3f, 0.f};
 
+  std::cout << "Creating pool box..." << std::endl;
+  auto pool_box = mesh::make_aligned_box("pool.png", 48);
+
+  std::cout << "Creating wood box..." << std::endl;
+  auto wood_box = mesh::make_aligned_box("wood.png");
+
   /* Green cube asthe board */
   auto green_board = std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(green, 48)),
+    std::make_shared<mesh_scene_object>(pool_box),
     matr<double>::make_translation({0.0, 0.01, 0.0})
     * matr<double>::make_scalation({2.0, 0.1, 1.0})
   );
+
+
 
   /* Brown top-left leg */
   auto tl_leg = std::make_shared<transformed_scene_object>(
@@ -53,35 +61,35 @@ igr::board::board () {
 
   /* Under wood */
   frame->add_object(std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    std::make_shared<mesh_scene_object>(wood_box),
     matr<double>::make_translation({0.0, 0.0, 0.0})
     * matr<double>::make_scalation({2.0, 0.1, 1.0})
   ));
 
   /* Top wood */
   frame->add_object(std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    std::make_shared<mesh_scene_object>(wood_box),
     matr<double>::make_translation({1.05, 0.04, 0.0})
     * matr<double>::make_scalation({0.1, 0.18, 1.0})
   ));
 
   /* Bottom wood */
   frame->add_object(std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    std::make_shared<mesh_scene_object>(wood_box),
     matr<double>::make_translation({-1.05, 0.04, 0.0})
     * matr<double>::make_scalation({0.1, 0.18, 1.0})
   ));
 
   /* Left wood */
   frame->add_object(std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    std::make_shared<mesh_scene_object>(wood_box),
     matr<double>::make_translation({0.0, 0.04, 0.55})
     * matr<double>::make_scalation({2.2, 0.18, 0.1})
   ));
 
   /* Left wood */
   frame->add_object(std::make_shared<transformed_scene_object>(
-    std::make_shared<mesh_scene_object>(mesh::make_aligned_box(brown)),
+    std::make_shared<mesh_scene_object>(wood_box),
     matr<double>::make_translation({0.0, 0.04, -0.55})
     * matr<double>::make_scalation({2.2, 0.18, 0.1})
   ));

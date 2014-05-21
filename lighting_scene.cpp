@@ -25,6 +25,10 @@ void igr::lighting_scene::on_begin () {
   sun_on = true;
   lamp_on = true;
   ambient_on = true;
+
+  lamp_scale = 1.0;
+
+  glEnable(GL_TEXTURE_2D);
 }
 
 bool igr::lighting_scene::on_event (event_t event) {
@@ -53,6 +57,13 @@ void igr::lighting_scene::on_update (float delta) {
   time += delta;
   lamp_light.position = {-0.3 * cos(time*3), 0.7, -0.3 * sin(time*3), category::point};
   lamp_light.direction = {1.1 * cos(time*3), -1.0, 1.1 * sin(time*3), category::vector};
+
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8)) {
+    lamp_scale += delta;
+  }  
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9)) {
+    lamp_scale -= delta;
+  }
 
   double rotX = 0.0;
   double rotY = 0.0;
@@ -157,12 +168,13 @@ void igr::lighting_scene::on_update (float delta) {
 
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-    cam.eye  = {3.0, 3.0, 3.0};
+    cam.eye  = {1.5, 1.5, 1.5};
     cam.look = {0.0, 0.0, 0.0};
     cam.up   = {0.0, 1.0, 0.0};
     //cam.normalize();
 
     obj->trans = matr<double>{};
+    lamp_scale = 1.0;
   }
 
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4)) {
@@ -302,41 +314,23 @@ void igr::lighting_scene::on_draw () {
     sun_light.gl_disable();
   }
 
-  if (lamp_on) {
-    lamp_light.gl_enable();
-    lamp_light.gl_update();
-  } else {
-    lamp_light.gl_disable();
-  }
-
   if (ambient_on) {
     set_ambient_light_color({0.2f, 0.2f, 0.2f});
   } else {
     set_ambient_light_color({0.f, 0.f, 0.f});
   }
 
-  /* Draw axis */
-  glDisable(GL_LIGHTING);
-  glBegin(GL_LINES);
-    glColor3f(0.3f, 0.f, 0.f);
-    glVertex3f(-100.f, 0.f, 0.f);
-    glVertex3f(+100.f, 0.f, 0.f);
+  /* Scalation! */
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glScaled(1.0, lamp_scale, 1.0);
 
-    glColor3f(0.f, 0.24f, 0.f);
-    glVertex3f(0.f, -100.f, 0.f);
-    glVertex3f(0.f, +100.f, 0.f);
-
-    glColor3f(0.f, 0.15f, 0.3f);
-    glVertex3f(0.f, 0.f, -100.f);
-    glVertex3f(0.f, 0.f, +100.f);
-  glEnd();
-  glEnable(GL_LIGHTING);
-
-  /* Draw board */
-  GLfloat emb[] = {0.f, 0.f, 0.f, 1.f};
-  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emb);
-  glPolygonMode(GL_FRONT_AND_BACK, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::I) ? GL_LINE : GL_FILL);
-  obj->draw_object();
+  if (lamp_on) {
+    lamp_light.gl_enable();
+    lamp_light.gl_update();
+  } else {
+    lamp_light.gl_disable();
+  }
 
   auto cyl = mesh::make_aligned_cylinder(colors::white, 32);
   cyl.transform(matr<double>::make_scalation({0.15, 0.15, 0.1}));
@@ -355,6 +349,34 @@ void igr::lighting_scene::on_draw () {
   bulb.transform(matr<double>::make_scalation({0.1, 0.1, 0.1}));
   bulb.transform(matr<double>::make_translation(lamp_light.position));
   bulb.gl_draw_immediate();
+
+  glPopMatrix();
+
+  /* Draw board */
+  GLfloat emb[] = {0.f, 0.f, 0.f, 1.f};
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emb);
+  glPolygonMode(GL_FRONT_AND_BACK, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::I) ? GL_LINE : GL_FILL);
+  obj->draw_object();
+
+
+
+  /* Draw axis */
+  glDisable(GL_LIGHTING);
+  glBegin(GL_LINES);
+    glColor3f(0.3f, 0.f, 0.f);
+    glVertex3f(-100.f, 0.f, 0.f);
+    glVertex3f(+100.f, 0.f, 0.f);
+
+    glColor3f(0.f, 0.24f, 0.f);
+    glVertex3f(0.f, -100.f, 0.f);
+    glVertex3f(0.f, +100.f, 0.f);
+
+    glColor3f(0.f, 0.15f, 0.3f);
+    glVertex3f(0.f, 0.f, -100.f);
+    glVertex3f(0.f, 0.f, +100.f);
+  glEnd();
+  glEnable(GL_LIGHTING);
+
 }
 
 void igr::lighting_scene::on_end () {

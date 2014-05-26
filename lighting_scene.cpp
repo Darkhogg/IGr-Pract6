@@ -61,7 +61,7 @@ void igr::lighting_scene::on_update (float delta) {
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8)) {
     lamp_scale += delta;
   }  
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9)) {
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9) && lamp_scale > 0.2) {
     lamp_scale -= delta;
   }
 
@@ -174,6 +174,7 @@ void igr::lighting_scene::on_update (float delta) {
     //cam.normalize();
 
     obj->trans = matr<double>{};
+    lamptrans = matr<double>{};
     lamp_scale = 1.0;
   }
 
@@ -198,15 +199,17 @@ void igr::lighting_scene::on_update (float delta) {
 
 
   /* Scene transforms */
-
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::U)) {
     obj->trans = matr<double>::make_translation({delta, 0.0, 0.0}) * obj->trans;
+    lamptrans = matr<double>::make_translation({delta, 0.0, 0.0}) * lamptrans;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::J)) {
     obj->trans = matr<double>::make_scalation({1.0, 1.0 + delta, 1.0}) * obj->trans;
+    lamptrans = matr<double>::make_scalation({1.0, 1.0 + delta, 1.0}) * lamptrans;
   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M)) {
     obj->trans = matr<double>::make_rotation_z(delta) * obj->trans;
+    lamptrans = matr<double>::make_rotation_z(delta) * lamptrans;
   }
 }
 
@@ -302,8 +305,8 @@ void igr::lighting_scene::on_draw () {
   glFogi(GL_FOG_MODE, GL_LINEAR);
   glFogfv(GL_FOG_COLOR, fog);
   glFogf(GL_FOG_DENSITY, 0.2f);
-  glFogf(GL_FOG_START, 2.f);
-  glFogf(GL_FOG_END, 8.f);
+  glFogf(GL_FOG_START, 4.f);
+  glFogf(GL_FOG_END, 6.f);
   glEnable(GL_FOG);
 
   /* Update the lights */
@@ -323,22 +326,28 @@ void igr::lighting_scene::on_draw () {
   /* Scalation! */
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
-  glScaled(1.0, lamp_scale, 1.0);
+  //glScaled(1.0, lamp_scale, 1.0);
+  lamptrans.gl_mult();
 
   if (lamp_on) {
+    /* Calc light cone */
+    lamp_light.cutoff = atan2(0.3, lamp_scale) * 57.3;
+    lamp_light.exponent = lamp_scale * lamp_scale * 100;
+
     lamp_light.gl_enable();
     lamp_light.gl_update();
   } else {
     lamp_light.gl_disable();
   }
 
-  auto cyl = mesh::make_aligned_cylinder(colors::white, 32);
-  cyl.transform(matr<double>::make_scalation({0.15, 0.15, 0.1}));
-  cyl.transform(matr<double>::make_translation({0, 0, 0.05}));
-  cyl.transform(matr<double>::make_rotation_x(atan2(2, -1)));
-  cyl.transform(matr<double>::make_rotation_y(-3 * time + M_PI_2));
-  cyl.transform(matr<double>::make_translation(lamp_light.position));
-  cyl.gl_draw_immediate();
+  auto lamp = make_aligned_lamp(colors::white, 32);
+  lamp.transform(matr<double>::make_scalation({0.15, 0.15, 0.1}));
+  lamp.transform(matr<double>::make_scalation({1.0, 1.0, lamp_scale}));
+  lamp.transform(matr<double>::make_translation({0, 0, 0.02}));
+  lamp.transform(matr<double>::make_rotation_x(atan2(1.1, -1)));
+  lamp.transform(matr<double>::make_rotation_y(-3 * time + M_PI_2));
+  lamp.transform(matr<double>::make_translation(lamp_light.position));
+  lamp.gl_draw_immediate();
 
   if (lamp_on) {
     GLfloat emw[] = {1.f, 1.f, 0.5f, 1.f};
@@ -346,7 +355,10 @@ void igr::lighting_scene::on_draw () {
   }
 
   auto bulb = mesh::make_aligned_sphere(lamp_on ? color{1.0, 1.0, 0.5} : color{0.5, 0.5, 0.1}, 32, 32);
-  bulb.transform(matr<double>::make_scalation({0.1, 0.1, 0.1}));
+  bulb.transform(matr<double>::make_scalation({0.08, 0.08, 0.08}));
+  bulb.transform(matr<double>::make_scalation({1.0, 1.0, lamp_scale}));
+  bulb.transform(matr<double>::make_rotation_x(atan2(1.1, -1)));
+  bulb.transform(matr<double>::make_rotation_y(-3 * time + M_PI_2));
   bulb.transform(matr<double>::make_translation(lamp_light.position));
   bulb.gl_draw_immediate();
 
@@ -361,21 +373,23 @@ void igr::lighting_scene::on_draw () {
 
 
   /* Draw axis */
-  glDisable(GL_LIGHTING);
-  glBegin(GL_LINES);
-    glColor3f(0.3f, 0.f, 0.f);
-    glVertex3f(-100.f, 0.f, 0.f);
-    glVertex3f(+100.f, 0.f, 0.f);
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::K)) {
+    glDisable(GL_LIGHTING);
+    glBegin(GL_LINES);
+      glColor3f(0.3f, 0.f, 0.f);
+      glVertex3f(-100.f, 0.f, 0.f);
+      glVertex3f(+100.f, 0.f, 0.f);
 
-    glColor3f(0.f, 0.24f, 0.f);
-    glVertex3f(0.f, -100.f, 0.f);
-    glVertex3f(0.f, +100.f, 0.f);
+      glColor3f(0.f, 0.24f, 0.f);
+      glVertex3f(0.f, -100.f, 0.f);
+      glVertex3f(0.f, +100.f, 0.f);
 
-    glColor3f(0.f, 0.15f, 0.3f);
-    glVertex3f(0.f, 0.f, -100.f);
-    glVertex3f(0.f, 0.f, +100.f);
-  glEnd();
-  glEnable(GL_LIGHTING);
+      glColor3f(0.f, 0.15f, 0.3f);
+      glVertex3f(0.f, 0.f, -100.f);
+      glVertex3f(0.f, 0.f, +100.f);
+    glEnd();
+    glEnable(GL_LIGHTING);
+  }
 
 }
 
@@ -383,6 +397,54 @@ void igr::lighting_scene::on_end () {
 
 }
 
+
+igr::mesh igr::make_aligned_lamp (color col, std::size_t sides) {
+  mesh cyl;
+
+  cyl.add_vertex(
+      {0.0, 0.0, 0.5},
+      {0.0, 0.0, 1.0},
+      col, {}
+  );
+  cyl.add_vertex(
+      {0.0, 0.0, -0.5},
+      {0.0, 0.0, -1.0},
+      col, {}
+  );
+
+  for (std::size_t i = 1; i <= sides; ++i) {
+    double ang = (i - 1) * 2.0 * M_PI / (double) sides;
+
+    /* Add the two vertices */
+    cyl.add_vertex(
+      {0.2 * cos(ang), 0.2 * sin(ang), 0.5},
+      {cos(ang), sin(ang), 0},
+      col, {}
+    );
+    cyl.add_vertex(
+      {0.5 * cos(ang), 0.5 * sin(ang), -0.5},
+      {cos(ang), sin(ang), 0},
+      col, {}
+    );
+
+    std::size_t j = i - 1;
+
+    std::size_t f00 = 2 + (j * 2);
+    std::size_t f01 = 3 + (j * 2);
+    std::size_t f10 = 2 + (((j + 1) * 2 )    % (sides * 2));
+    std::size_t f11 = 2 + (((j + 1) * 2 + 1) % (sides * 2));
+
+    /* Add the two faces */
+    cyl.add_face(f00, f10, f01);
+    cyl.add_face(f01, f10, f11);
+
+    cyl.add_face(0, f10, f00);
+    //cyl.add_face(1, f01, f11);
+
+  }
+
+  return cyl;
+}
 
 
 /** Main method */

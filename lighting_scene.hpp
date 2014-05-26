@@ -27,6 +27,8 @@ namespace igr {
       bool lamp_on, sun_on, ambient_on;
       double lamp_scale;
 
+      matr<double> lamptrans;
+
     public:
       lighting_scene()
         : scene {"Práctica 7 - Daniel Escoz Solana"},
@@ -40,4 +42,6 @@ namespace igr {
       void on_draw ();
       void on_end ();
   };
+
+  mesh make_aligned_lamp (color col, std::size_t sides);
 }
